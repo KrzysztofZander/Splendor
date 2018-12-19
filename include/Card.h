@@ -5,7 +5,6 @@
 #include <conio.h>
 #include <string>
 
-
 using namespace std;
 
 class Table;
@@ -725,7 +724,6 @@ class Table :public Card
         for (int i=0;i<=numPlayers;i++)
                 {
                     arystOnTable[i]=ArystDeck[i];
-                    arystOnTable[i].setAryst(1,0,0,0,0);
                 }
     }
 
