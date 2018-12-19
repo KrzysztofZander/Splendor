@@ -1,0 +1,62 @@
+# depslib dependency file v1.0
+1543317810 source:g:\cpp\splendor\src\card.cpp
+	"Card.h"
+
+1544886142 g:\cpp\splendor\include\card.h
+	<iostream>
+	<windows.h>
+	<vector>
+	<cstdio>
+	<conio.h>
+	<string>
+
+1544785533 source:g:\cpp\splendor\main.cpp
+	<iostream>
+	<vector>
+	<time.h>
+	<cstdlib>
+	<conio.h>
+	<windows.h>
+	"Card.h"
+
+1543852654 source:f:\splendor\main.cpp
+	<iostream>
+	<vector>
+	<time.h>
+	<cstdlib>
+	<conio.h>
+	<windows.h>
+	"Card.h"
+
+1544458292 f:\splendor\include\card.h
+	<iostream>
+	<windows.h>
+	<vector>
+	<cstdio>
+	<conio.h>
+	<string>
+
+1543317810 source:f:\splendor\src\card.cpp
+	"Card.h"
+
+1545130532 source:g:\cpp\splendornew\splendor\main.cpp
+	<iostream>
+	<vector>
+	<time.h>
+	<cstdlib>
+	<conio.h>
+	<windows.h>
+	"Card.h"
+	<conio.h>
+
+1545171560 g:\cpp\splendornew\splendor\include\card.h
+	<iostream>
+	<windows.h>
+	<vector>
+	<cstdio>
+	<conio.h>
+	<string>
+
+1543317810 source:g:\cpp\splendornew\splendor\src\card.cpp
+	"Card.h"
+
