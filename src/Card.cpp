@@ -3,6 +3,7 @@
 
 
 
+
 Card::Card(int poi,int val,int whi,int re,int bla,int gre,int blu)
 {
     white=whi;
