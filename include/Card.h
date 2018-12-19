@@ -7,7 +7,7 @@
 
 using namespace std;
 
-
+class Table;
 
 class Card
 {
@@ -420,55 +420,64 @@ class Menu
     {
         int retnum;
         int choose=start;
+        int enter;
 
             if(type==1)
             {
-            for(int i=1;i<=rows;i++)
-            {
-                if (choose==i)
+                while (enter!=13)
                 {
-                    HANDLE hOut;
-                    hOut = GetStdHandle( STD_OUTPUT_HANDLE );
-                    SetConsoleTextAttribute( hOut, BACKGROUND_BLUE | BACKGROUND_INTENSITY);
-                    cout<<options[i]<<endl;
-                    SetConsoleTextAttribute( hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
-                    retnum=i;
-                }
-                else
-                {
-                    cout<<options[i]<<endl;
-                }
-            }
-            choose=_getch();
-             switch (choose)
-			{
-				case 224:
-						if (kbhit() )
-						{
-						int znak1=getch();
-						switch(znak1)
-							{
-							case 72: { if(start<1){start=1; return start;break;}return start-=1;break;}  // przesuniêcie do góry
-							case 80: { if(start>=rows){start=rows; return start;break;};return start+=1;break;}  // przesuniecie w dól
+                    gotoxy(1,39);
+                    for(int i=1;i<=rows;i++)
+                    {
+                        if (choose==i)
+                        {
+                            HANDLE hOut;
+                            hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+                            SetConsoleTextAttribute( hOut, BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+                            cout<<options[i]<<endl;
+                            SetConsoleTextAttribute( hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+                            retnum=i;
+                        }
+                        else
+                        {
+                            cout<<options[i]<<endl;
+                        }
+                    }
+                    enter=_getch();
+                    switch (enter)
+                    {
+                        case 224:
+                                    if (kbhit() )
+                                    {
+                                    int znak1=getch();
+                                    switch(znak1)
+                                        {
+                                        case 72:{choose-=1;break;}  //{ if(start<1){start=1; return start;break;}return start-=1;break;}  // przesuniêcie do góry
+                                        case 80: {choose+=1;break;} //{ if(start>=rows){start=rows; return start;break;};return start+=1;break;}  // przesuniecie w dól
+                                        }
+                                    if(choose>=rows){choose=rows;}
+                                    if(choose<1){choose=1;}
+                                    break;
+                                    }
+                        case 13: {return choose;break;}
+                        default: {break;}
 
-                            }
-						}
-                case 13: {return start*10;break;}
-				default: {break;}
-
-			}
+                    }
+                    cout<<choose;
+                }
             }
 
             if(type==2)
             {
+                int enter=0;
                 int ii;
                 for(int i=1;i<=rows;i++)
                 {
                     if(choose==i){ii=i;}
                 }
-                choose= _getch();
+                enter= _getch();
 
-                switch (choose)
+                switch (enter)
                 {
                     case 224:
                             if (kbhit() )
@@ -482,12 +491,12 @@ class Menu
                                         case 80:{start-=4;if(start<=0)start+=4;				 break;}  // przesuniecie w dó³
                                     }
                                     if(start>rows)start=rows;if(start<=0)start=1;
-                                    break;
+                                    return start;break;
                             }
-                    case 13: {break;}
+                    case 13: {return start*100;break;}
 
                 }
-                return start;
+
 
 
 
@@ -775,6 +784,7 @@ class Table :public Card
             onTable[i+4]=twoStar[i-1];
             onTable[i+8]=threeStar[i-1];
         }
+        onTable[0].value=0;
 
         playerline[0].countPlayerPoints();
     }
@@ -794,7 +804,7 @@ class Table :public Card
                 {
                 onTable[j].cardLine(i);cout<<" ";
                 }
-                if(j==numer+4&&i!=2){onTable[12].backgroudColor("        ");}
+                if(j==numer+4&&i!=2){onTable[0].backgroudColor("        ");}
                 if(j==numer+4&&i==2)
                     {
                         char isleft[33];
@@ -901,27 +911,15 @@ class Table :public Card
         int reserveCard=55;
         int choose=1;
 
-        while(choose<=9)
-        {
-
-
-        menu.gotoxy(30,30);
-
-
-        cout<<endl<<"Tura gracza "<<active->name<<endl<<endl;
-        cout<<"Twoje zetony:";
-        active->showPlayerCoin(active->playerCoin);
-        cout<<endl<<endl<<"Twoje karty:";
-        active->showPlayerCard();
-        cout<<endl<<endl<<"Twoje punkty:"; active->showPlayerPionts();
+        playerStatus(active);
 
         string playermanu[5]{" ","Pobierz zetony","Pobierz karte","Rezerwuj Karte","Zobacz zarezerwowane"};
+
         choose=menu.show(1,choose,4,playermanu);
 
-        }
         switch(choose)
         {
-            case 10:
+            case 1:
                 {       // Wybor zetonow ( skonczone !)
                         menu.gotoxy(1,30);
                         cout<<endl<<"Tura gracza "<<active->name<<endl<<endl<<"Twoje zetony:";
@@ -1038,48 +1036,27 @@ class Table :public Card
 
 
                 break;}
-            case 20:
-                {       // Wybor Karty ( DO NAPRAWY !!!! )
+            case 2:
+                {       // Wybor Karty ( skonczone ! )
 
-                    cout<<"Podaj numer karty od 1 do 12 :";
-                    /*char num[2];
-                    while (cnumber<1||cnumber>=13)
+                    cnumber=1;
+                    int old;
+                    while (cnumber<13)
                     {
+                        if(cnumber<13){onTable[cnumber].checked=1;}
+                        screenReset();
+                        playerStatus(active);
+                        old=cnumber;
+                        cnumber=menu.show(2,cnumber,12,NULL);
+                        if(cnumber<13){onTable[old].checked=0;}
 
-                        num[0]=_getch();cout<<num[0];
-                        num[1]=_getch();cout<<num[1];
-
-                        if (num[0]!='1')
-                            {
-                                cnumber=atoi(&num[0]);
-                            }
-
-                        if ((num[1]=='0'||num[1]=='1'||num[1]=='2'||num[1]=='3'||num[1]=='4'||num[1]=='5'||num[1]=='6'||num[1]=='7'||num[1]=='8'||num[1]=='9')&&(num[0]=='1'))
-                            {
-                                 cnumber=atoi(&num[1])+10;
-                            }
-                        else {if (!isdigit(num[0]))cnumber=atoi(&num[0]);}
-                        cout<<endl;
-
-
-                    }*/int karta=1;
-                    int stara=0;
-                    while(true)
-                    {
-
-
-                    screenReset();
-                    string playermanu[5]{" ","Pobierz zetony","Pobierz karte","Rezerwuj Karte","Zobacz zarezerwowane"};
-
-                    karta=menu.show(2,karta,12,playermanu);
-                    onTable[stara].checked=0;
-                    stara=karta;
-                    onTable[karta].checked=1;
                     }
-                    //getCard(cnumber, active, endTr);
-                    //ifAryst(active);
+                    cnumber=cnumber/100;
+
+                    getCard(cnumber, active, endTr);
+                    ifAryst(active);
                 break;}
-            case 30:
+            case 3:
                 {       // Rezerwacja ( skonczone !)
                     char pick;
                     if(coins[5]>=1)
@@ -1108,7 +1085,7 @@ class Table :public Card
 
                 break;
                 }
-            case 40:
+            case 4:
                 {       // Wybor zarezerwowanej
                     int lenght=0;
                     for(int i=0;i<5;i++)
@@ -1173,6 +1150,7 @@ class Table :public Card
                     oneStar[n]=oneStar[4];
                     oneStar.erase(oneStar.begin()+4);
                     endTr=1;
+                    onTable[cnumber].value=0;
                     cout<<"Pobrano karte nr :"<<cnumber;
                     if(acc->autoplay){acc->si=true;}
                     }
@@ -1195,6 +1173,7 @@ class Table :public Card
                     twoStar[n]=twoStar[4];
                     twoStar.erase(twoStar.begin()+4);
                     endTr=1;
+                    onTable[cnumber].value=0;
                     cout<<"Pobrano karte nr :"<<cnumber;
                     if(acc->autoplay){acc->si=true;}
                     }
@@ -1215,6 +1194,7 @@ class Table :public Card
                     acc->onHand[acc->carditerator++]=*choice;
                     threeStar[n]=threeStar[4];
                     threeStar.erase(threeStar.begin()+4);
+                    onTable[cnumber].value=0;
                     cout<<"Pobrano Karte nr :"<<cnumber;
                     if(acc->autoplay){acc->si=true;}
                     endTr=1;
@@ -1552,6 +1532,17 @@ class Table :public Card
                         showCoin(coins);
 
     }
+
+    void playerStatus(Gracz* active)
+    {
+        cout<<endl<<"Tura gracza "<<active->name<<endl<<endl;
+        cout<<"Twoje zetony:";
+        active->showPlayerCoin(active->playerCoin);
+        cout<<endl<<endl<<"Twoje karty:";
+        active->showPlayerCard();
+        cout<<endl<<endl<<"Twoje punkty:"; active->showPlayerPionts();
+    }
+
     void simpleSiAutoplay(Gracz* player)
     {
         cout<<endl<<"Tura gracza "<<player->name<<endl;
