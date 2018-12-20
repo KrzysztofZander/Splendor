@@ -1,4 +1,10 @@
 
+zmiana metody wprowadzania graczy
+
 zmiana stylu "zetonu"
 
-zmiana decyzji pobierania zetonu
+zmiana stylu pobierania zetonu
+
+dodaæ "Instrukcja gry"
+
+poziom trudnoœci komputera

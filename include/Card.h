@@ -319,6 +319,7 @@ class Gracz
         int numberOfRound=0;
         bool exist=false;
         bool si=false;
+        bool lastround=false;
 
         string playerCoinName[6]={"red","blue","black","white","green","gold"};
 
@@ -452,8 +453,8 @@ class Menu
                                     int znak1=getch();
                                     switch(znak1)
                                         {
-                                        case 72:{choose-=1;break;}  //{ if(start<1){start=1; return start;break;}return start-=1;break;}  // przesuni阠ie do g髍y
-                                        case 80: {choose+=1;break;} //{ if(start>=rows){start=rows; return start;break;};return start+=1;break;}  // przesuniecie w d髄
+                                        case 72:{choose-=1;break;}   // przesuni锚cie do g贸ry
+                                        case 80: {choose+=1;break;}  // przesuniecie w d贸l
                                         }
                                     if(choose>=rows){choose=rows;}
                                     if(choose<1){choose=1;}
@@ -463,7 +464,7 @@ class Menu
                         default: {break;}
 
                     }
-                    cout<<choose;
+
                 }
             }
 
@@ -475,6 +476,8 @@ class Menu
                 {
                     if(choose==i){ii=i;}
                 }
+                while (enter!=13)
+                {
                 enter= _getch();
 
                 switch (enter)
@@ -485,16 +488,21 @@ class Menu
                                 int znak1=getch();
                                 switch(znak1)
                                     {
-                                        case 75:{start--;		         break;}  // przesuni阠ie w lewo
-                                        case 77:{start++;				 break;}  // przesuni阠ie w prawo
-                                        case 72:{start+=4;if(start>rows)start-=4;				 break;}  // przesuni阠ie do g髍y
-                                        case 80:{start-=4;if(start<=0)start+=4;				 break;}  // przesuniecie w d蟪
+                                        case 75:{start--;                           break;}  // przesuni锚cie w lewo
+                                        case 77:{start++;                           break;}  // przesuni锚cie w prawo
+                                        case 72:{start+=4;if(start>rows)start-=4;   break;}  // przesuni锚cie do g贸ry
+                                        case 80:{start-=4;if(start<=0)start+=4;     break;}  // przesuniecie w d贸l
+                                        default: {break;}
                                     }
+
                                     if(start>rows)start=rows;if(start<=0)start=1;
                                     return start;break;
                             }
                     case 13: {return start*100;break;}
+                    case 27: {return 500;break;}
+                    default: {break;}
 
+                }
                 }
 
 
@@ -526,6 +534,7 @@ class Table :public Card
     Menu menu;
 
     bool gra=true;
+    bool endgame=false;
 
     Arystoc arys[10];
     int arystTableSet=0;
@@ -906,9 +915,10 @@ class Table :public Card
     void action(Gracz* active)
     {
         int endTr=0;
-        int cnumber=0;
+        int cnumber=1;
         int reserveCard=55;
         int choose=1;
+        int old;
 
         playerStatus(active);
 
@@ -1038,42 +1048,70 @@ class Table :public Card
             case 2:
                 {       // Wybor Karty ( skonczone ! )
 
-                    cnumber=1;
-                    int old;
+
+
                     while (cnumber<13)
                     {
-                        if(cnumber<13){onTable[cnumber].checked=1;}
-                        screenReset();
+                        onTable[cnumber].checked=1;
+                        menu.gotoxy(1,7);
+                        showCardFromDeck(3,9,threeStar);
+                        menu.gotoxy(1,14);
+                        showCardFromDeck(2,5,twoStar);
+                        menu.gotoxy(1,21);
+                        showCardFromDeck(1,1,oneStar);
+                        cout<<endl<<"Zetony na stole :";
+                        showCoin(coins);
                         playerStatus(active);
                         old=cnumber;
                         cnumber=menu.show(2,cnumber,12,NULL);
-                        if(cnumber<13){onTable[old].checked=0;}
+                        onTable[old].checked=0;
 
                     }
-                    cnumber=cnumber/100;
-
-                    getCard(cnumber, active, endTr);
-                    ifAryst(active);
+                    if(cnumber==500)break;
+                    else
+                    {
+                        cnumber=cnumber/100;
+                        menu.gotoxy(1,45);
+                        getCard(cnumber, active, endTr);
+                        ifAryst(active);
+                    }
                 break;}
             case 3:
                 {       // Rezerwacja ( skonczone !)
-                    char pick;
                     if(coins[5]>=1)
                     {
-                    cout<<"Wybierz karte ,lub 0 by wyjsc ";
-                    while (reserveCard<0||reserveCard>=13)
+                        while (cnumber<13)
                         {
-                            pick=_getch();
-                            reserveCard=atoi(&pick);
+                            onTable[cnumber].checked=1;
+                            menu.gotoxy(1,7);
+                            showCardFromDeck(3,9,threeStar);
+                            menu.gotoxy(1,14);
+                            showCardFromDeck(2,5,twoStar);
+                            menu.gotoxy(1,21);
+                            showCardFromDeck(1,1,oneStar);
+                            cout<<endl<<"Zetony na stole :";
+                            showCoin(coins);
+                            playerStatus(active);
+                            old=cnumber;
+                            cnumber=menu.show(2,cnumber,12,NULL);
+                            onTable[old].checked=0;
+
                         }
-                        if(reserveCard==0)break;
-                        else
-                        {
-                        resCard(reserveCard,active, endTr);
-                        active->playerCoin[5]+=1;
-                        coins[5]-=1;
-                        endTr=1;
-                        }
+                            if(cnumber==500)break;
+
+
+
+
+                            else
+                            {
+                            cnumber=cnumber/100;
+                            menu.gotoxy(1,44);
+                            onTable[cnumber].value=0;
+                            resCard(cnumber,active, endTr);
+                            active->playerCoin[5]+=1;
+                            coins[5]-=1;
+                            endTr=1;
+                            }
 
                     }
                     else
@@ -1085,7 +1123,7 @@ class Table :public Card
                 break;
                 }
             case 4:
-                {       // Wybor zarezerwowanej
+                {       // Wybor zarezerwowanej ( do sprawdzenia !)
                     int lenght=0;
                     for(int i=0;i<5;i++)
                     {
@@ -1094,15 +1132,24 @@ class Table :public Card
                     if(lenght>0)
                     {
                     char pick;
-                    int choice;
-                    showReservcard(active,lenght);
-                    cout<<endl<<"Wybierz karte lub 0 by wyjsc ";
-                    do{
-                            pick=_getch();
-                            choice=atoi(&pick);
-                    cout<<endl;
-                    }while(choice>lenght);
-                    if(choice==0)break;
+                    int choice=1;
+
+
+                   while(choice<99)
+                   {
+                       active->reserve[choice-1].checked=1;
+                       menu.gotoxy(1,44);
+                       showReservcard(active,lenght);
+                       old=choice-1;
+                       choice=menu.show(2,choice,lenght,NULL);
+                       active->reserve[old].checked=0;
+
+                   }
+
+
+                    if(choice==500)break;
+                    else{
+                    choice=choice/100;
                     int ok=cardAfford(active,active->reserve[choice-1]);
                     if(ok>=1)
                     {
@@ -1116,11 +1163,12 @@ class Table :public Card
                         ifAryst(active);
                         endTr=1;
                     }
+                    }
 
                     }
                     else cout<<"Nie masz zarezerwowanych kart";
                     _getch();
-                break;}
+            break;}
             default:{cout<<endl<<endl<<"Cos poszlo nie tak";_getch();break;}
         }
 
@@ -1268,7 +1316,6 @@ class Table :public Card
                 _getch();
 
     }
-
     void ifAryst(Gracz* acc)
     {
         acc->countPlayerCards ();
@@ -1308,8 +1355,7 @@ class Table :public Card
     }
     void endTurn()
     {
-        if(checkNumberOfCoin(&playerline[0])>10)
-
+        if(checkNumberOfCoin(&playerline[0])>10) // Sprawdzenie czy gracz posiada wi臋cej ni偶 10 偶eton贸w
                         {
 
 
@@ -1360,21 +1406,30 @@ class Table :public Card
                 allPlayersround+=playerline[i].numberOfRound;
 
         }
+        if((playerline[0].points>=15)||(endgame))
+        {
+            endgame=true;
+        }
 
-        if((playerline[0].points>=15)&&(allPlayersround%numPlayers==0))
+        if((endgame)&&(allPlayersround%numPlayers==0))
         {
             system("cls");
+            Gracz winner=playerline[0];
+            for (int i=0;i<numPlayers;i++)
+            {
+                if(winner.points<playerline[i].points){winner=playerline[i];}
+            }
+
             cout<<"                     K O N I E C  G R Y"<<endl<<endl;
-            cout<<" W Y G R Y W A :    "<<playerline[0].name<<endl<<" Z D O B Y W A J A C   "<<playerline[0].points<<"   P U N K T O W"<<endl<<endl<<endl;
+            cout<<" W Y G R Y W A :    "<<winner.name<<endl<<" Z D O B Y W A J A C   "<<winner.points<<"   P U N K T O W"<<endl<<endl<<endl;
             for (int i=0;i<numPlayers;i++)
             {
                 cout<<playerline[i].name<<" "<<playerline[i].points<<" punkty"<<endl;
-                gra=false;
             }
 
         }
 
-        else //(playerline[0].points<15)
+        else if (playerline[0].points<15)
         {
         screenReset();
         playerline.push_back(playerline.front());
@@ -1561,7 +1616,7 @@ class Table :public Card
 
     		}
     	}
-    	Sleep(2000);
+    	Sleep(1000);
     	//Pobieranie karty
     	for(int i=12;i>0;i--)
     	{
@@ -1571,7 +1626,7 @@ class Table :public Card
     			if (player->si)
     			{
     				cout<<endl;
-    				Sleep(6000);
+    				Sleep(3000);
     			}
     		}
     	}

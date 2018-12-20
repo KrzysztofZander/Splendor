@@ -37,6 +37,8 @@ int main()
             game.simpleSiAutoplay(&game.playerline[0]);
         }
 
+        _getch();
+
 
     return 0;
 }
