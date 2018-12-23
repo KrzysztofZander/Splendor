@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 19.12.2018
 
 Dodane Menu
@@ -8,4 +9,16 @@ Usprawnione rezerwowanie kart
 
 Liczenie rund przy przed zakoñczeniem gry
 
+=======
+19.12.2018
+
+Dodane Menu
+Poprawione odœwie¿anie ekranu
+Usprawnione rezerwowanie kart
+
+20.12.2018
+
+Liczenie rund przy przed zakoñczeniem gry
+
+>>>>>>> cccb68005d71e9ad338a165168ab60b7496d6120
  
