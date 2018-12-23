@@ -8,3 +8,7 @@ zmiana stylu pobierania zetonu
 dodaæ "Instrukcja gry"
 
 poziom trudnoœci komputera
+
+przyspieszenie gry komputera
+
+rezerwowanie kart przez gracza komputerowego

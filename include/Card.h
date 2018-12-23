@@ -115,6 +115,7 @@ class Card
             cout<<" ";
             SetConsoleTextAttribute( hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
         }
+
         void redColor()
         {
             HANDLE hOut;
@@ -417,7 +418,7 @@ class Menu
     public:
 
 
-    int show(int type,int start,int rows,string options[])
+    int show(int type,int start,int rows,string options[],int x,int y)
     {
         int retnum;
         int choose=start;
@@ -427,21 +428,29 @@ class Menu
             {
                 while (enter!=13)
                 {
-                    gotoxy(1,39);
+
                     for(int i=1;i<=rows;i++)
-                    {
+                    {gotoxy(x,y-1+i);
                         if (choose==i)
                         {
+                            if(x<3){
                             HANDLE hOut;
                             hOut = GetStdHandle( STD_OUTPUT_HANDLE );
                             SetConsoleTextAttribute( hOut, BACKGROUND_BLUE | BACKGROUND_INTENSITY);
                             cout<<options[i]<<endl;
                             SetConsoleTextAttribute( hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+                            }
+                            else
+                            {
+                                cout<<options[i]<<endl;
+                            }
                             retnum=i;
                         }
                         else
                         {
-                            cout<<options[i]<<endl;
+                            if(x<3)
+                            {cout<<options[i]<<endl;}
+                            else{cout<<"       "<<endl;}
                         }
                     }
                     enter=_getch();
@@ -461,6 +470,7 @@ class Menu
                                     break;
                                     }
                         case 13: {return choose;break;}
+                        case 27: {return 123;break;}
                         default: {break;}
 
                     }
@@ -499,7 +509,7 @@ class Menu
                                     return start;break;
                             }
                     case 13: {return start*100;break;}
-                    case 27: {return 500;break;}
+                    case 27: {return 123;break;}
                     default: {break;}
 
                 }
@@ -800,8 +810,8 @@ class Table :public Card
    {
        for(int k=numer;k<numer+4;k++)
                 {
-                if(k<10)cout<<" Karta "<<k<<" ";
-                else cout<<" Karta"<<k<<" ";
+                if(k<10)cout<<"Karta  "<<k<<" ";
+                else cout<<"Karta "<<k<<" ";
                 }
         cout<<endl;
         for(int i=5;i>=0;i--)
@@ -918,13 +928,14 @@ class Table :public Card
         int cnumber=1;
         int reserveCard=55;
         int choose=1;
+        int pick=1+100;
         int old;
 
         playerStatus(active);
 
         string playermanu[5]{" ","Pobierz zetony","Pobierz karte","Rezerwuj Karte","Zobacz zarezerwowane"};
 
-        choose=menu.show(1,choose,4,playermanu);
+        choose=menu.show(1,choose,4,playermanu,1,39);
 
         switch(choose)
         {
@@ -941,24 +952,41 @@ class Table :public Card
                     char pickcoin[3];
 
                     int choosenCoin[5]={0,0,0,0,0};
-                    cout<<"Wybierz zetony"<<endl;
-                    cout<<"1.";temp.redColor();cout<<"                      "<<endl;
-                    cout<<"2.";temp.blueColor();cout<<"                     "<<endl;
-                    cout<<"3.";temp.blackColor();cout<<"                     "<<endl;
-                    cout<<"4.";temp.whiteColor();cout<<"                    "<<endl;
-                    cout<<"5.";temp.greenColor();cout<<"                     "<<endl<<endl;
-
+                    cout<<endl;
+                    int mycoin=0;
                     for (int i=0;i<3;i++)
                     {
-                        int check=0;
-                        while ((check<=0||check>5)||(!isdigit(pickcoin[i])))
+
+
+                        string arrow[6]={" <---"," <---"," <---"," <---"," <---"," <---",};
+                        while (pick>10)
                         {
-                            pickcoin[i]=_getch();
-                            check=atoi(&pickcoin[i]);
+                        pick=pick-100;
+                        menu.gotoxy(1,44);
+                        cout<<"Wybierz zetony"<<endl;
+                        cout<<"1.";temp.redColor();cout<<endl;
+                        cout<<"2.";temp.blueColor();cout<<endl;
+                        cout<<"3.";temp.blackColor();cout<<endl;
+                        cout<<"4.";temp.whiteColor();cout<<endl;
+                        cout<<"5.";temp.greenColor();cout<<endl;
+                        pick=menu.show(1,pick,5,arrow,4,45)-1;
+                        }
+                        menu.gotoxy(1+mycoin,52);
+                        mycoin+=2;
+                        switch(pick)
+                        {
+                        case 0:{temp.redColor();break;}
+                        case 1:{temp.blueColor();break;}
+                        case 2:{temp.blackColor();break;}
+                        case 3:{temp.whiteColor();break;}
+                        case 4:{temp.greenColor();break;}
+                        default:{break;}
                         }
 
-                    int numOfCoin=selectCoin(pickcoin[i]);
+
+                    int numOfCoin=pick;
                     choosenCoin[numOfCoin]++;
+                    pick=pick+101;
 
                     if(choosenCoin[numOfCoin]>=2)
                     {
@@ -1044,6 +1072,8 @@ class Table :public Card
 
 
 
+
+
                 break;}
             case 2:
                 {       // Wybor Karty ( skonczone ! )
@@ -1063,11 +1093,11 @@ class Table :public Card
                         showCoin(coins);
                         playerStatus(active);
                         old=cnumber;
-                        cnumber=menu.show(2,cnumber,12,NULL);
+                        cnumber=menu.show(2,cnumber,12,NULL,NULL,NULL);
                         onTable[old].checked=0;
 
                     }
-                    if(cnumber==500)break;
+                    if(cnumber==123)break;
                     else
                     {
                         cnumber=cnumber/100;
@@ -1093,11 +1123,11 @@ class Table :public Card
                             showCoin(coins);
                             playerStatus(active);
                             old=cnumber;
-                            cnumber=menu.show(2,cnumber,12,NULL);
+                            cnumber=menu.show(2,cnumber,12,NULL,NULL,NULL);
                             onTable[old].checked=0;
 
                         }
-                            if(cnumber==500)break;
+                            if(cnumber==123)break;
 
 
 
@@ -1141,13 +1171,13 @@ class Table :public Card
                        menu.gotoxy(1,44);
                        showReservcard(active,lenght);
                        old=choice-1;
-                       choice=menu.show(2,choice,lenght,NULL);
+                       choice=menu.show(2,choice,lenght,NULL,NULL,NULL);
                        active->reserve[old].checked=0;
 
                    }
 
 
-                    if(choice==500)break;
+                    if(choice==123)break;
                     else{
                     choice=choice/100;
                     int ok=cardAfford(active,active->reserve[choice-1]);
@@ -1175,7 +1205,7 @@ class Table :public Card
         if (endTr)endTurn();
     }
 
-    void getCard(int cnumber, Gracz* acc,int &endTr)
+    void getCard(int cnumber, Gracz* acc,int &endTr) // (Do poprawy)
     {
         Card* choice;
         int n;
@@ -1204,12 +1234,12 @@ class Table :public Card
 
 
                 }
-                if (((cnumber>4)&&(cnumber<9))&&(twoStar[cnumber-5].value==0))
+                if (((cnumber>=5)&&(cnumber<9))&&(twoStar[cnumber-5].value==0))
                 {
                     cout<<"Nie ma takiej karty";
                 }
 
-                if (((cnumber>4)&&(cnumber<9))&&(twoStar[cnumber-5].value))
+                if (((cnumber>=5)&&(cnumber<9))&&(twoStar[cnumber-5].value))
                 {
                     n=cnumber-5;
                     choice=&twoStar[n];
@@ -1414,6 +1444,7 @@ class Table :public Card
         if((endgame)&&(allPlayersround%numPlayers==0))
         {
             system("cls");
+            gra=false;
             Gracz winner=playerline[0];
             for (int i=0;i<numPlayers;i++)
             {
@@ -1424,7 +1455,7 @@ class Table :public Card
             cout<<" W Y G R Y W A :    "<<winner.name<<endl<<" Z D O B Y W A J A C   "<<winner.points<<"   P U N K T O W"<<endl<<endl<<endl;
             for (int i=0;i<numPlayers;i++)
             {
-                cout<<playerline[i].name<<" "<<playerline[i].points<<" punkty"<<endl;
+                cout<<playerline[i].name<<" "<<playerline[i].points<<" punkty "<<playerline[i].numberOfRound<<" rund "<<endl;
             }
 
         }
@@ -1629,6 +1660,7 @@ class Table :public Card
     				Sleep(3000);
     			}
     		}
+        ifAryst(player);
     	}
     	int checkTablecoin=0;
     	{
@@ -1685,6 +1717,7 @@ class Table :public Card
                 coins[5]--;
             }
         }
+
     	endTurn();
     }
 
