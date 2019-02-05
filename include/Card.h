@@ -1025,7 +1025,7 @@ class Table :public Card
                         {
                             if((choosenCoin[j]>=2)||(i==2))
                             {
-                            cout<<endl<<"Czy chcesz pobrac te zetony ?  ";
+                            cout<<endl<<endl<<"Czy chcesz pobrac te zetony ?  ";
                                 if(choosenCoin[0]==1){selectCoin('1');}
                                 if(choosenCoin[0]==2){selectCoin('1');selectCoin('1');}
                                 if(choosenCoin[1]==1){selectCoin('2');}
